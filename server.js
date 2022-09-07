@@ -33,7 +33,6 @@ const bookModel = mongoose.model("book", booksSchema);
 server.get("/books", getbooksHandler);
 server.post('/addBook', getAddBookHandler);
 server.delete('/deleteBook/:id',deleteBookHandler)
-server.put('/updata')
 
 function getbooksHandler(req, res) {
   bookModel.find({}, (err, result) => {
