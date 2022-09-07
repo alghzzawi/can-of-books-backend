@@ -11,11 +11,15 @@ const mongoose = require("mongoose");
 
 const PORT = process.env.PORT;
 
-//mongoose config
-mongoose.connect("mongodb://localhost:27017/booksDB", {
+// mongoose config
+mongoose.connect(`mongodb://localhost:27017/booksDB`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }); 
+// mongoose.connect("mongodb://books:mg1234@ac-thv50dq-shard-00-00.h2k1tmg.mongodb.net:27017,ac-thv50dq-shard-00-01.h2k1tmg.mongodb.net:27017,ac-thv50dq-shard-00-02.h2k1tmg.mongodb.net:27017/?ssl=true&replicaSet=atlas-yh80dn-shard-0&authSource=admin&retryWrites=true&w=majority", {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// }); 
 
 const booksSchema = new mongoose.Schema({
   title: String,
@@ -29,6 +33,7 @@ const bookModel = mongoose.model("book", booksSchema);
 server.get("/books", getbooksHandler);
 server.post('/addBook', getAddBookHandler);
 server.delete('/deleteBook/:id',deleteBookHandler)
+server.put('/updata')
 
 function getbooksHandler(req, res) {
   bookModel.find({}, (err, result) => {
@@ -79,6 +84,10 @@ function deleteBookHandler(req,res){
 server.get("/", (req, res) => {
   //path
   res.send("route is runing");
+});
+server.get("*", (req, res) => {
+  //path
+  res.send("route is runing--");
 });
 
 server.listen(PORT, () => {
