@@ -8,10 +8,7 @@ server.use(express.json())
 require("dotenv").config();
 
 const mongoose = require("mongoose");
-
-const PORT = process.env.PORT;
-
-// mongoose config
+	@@ -15,25 +15,25 @@ const PORT = process.env.PORT;
 mongoose.connect(`mongodb://localhost:27017/booksDB`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -33,14 +30,11 @@ const bookModel = mongoose.model("book", booksSchema);
 server.get("/books", getbooksHandler);
 server.post('/addBook', getAddBookHandler);
 server.delete('/deleteBook/:id',deleteBookHandler)
+server.put('/updata')
 
 function getbooksHandler(req, res) {
   bookModel.find({}, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
+	@@ -45,39 +45,58 @@ function getbooksHandler(req, res) {
   });
 }
 
@@ -74,21 +68,3 @@ function deleteBookHandler(req,res){
           }
           else{
               res.send(result)
-          }
-      })
-  })
-}
-
-// http://localhost:
-server.get("/", (req, res) => {
-  //path
-  res.send("route is runing");
-});
-server.get("*", (req, res) => {
-  //path
-  res.send("route is runing--");
-});
-
-server.listen(PORT, () => {
-  console.log(`you run this PORT: ${PORT}`);
-});
