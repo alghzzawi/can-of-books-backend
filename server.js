@@ -12,7 +12,7 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT;
 
 // mongoose config
-mongoose.connect(`mongodb://localhost:27017/booksDB`, {
+mongoose.connect(`${process.env.URL_MONGODB}`, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -25,18 +25,21 @@ const booksSchema = new mongoose.Schema({
   title: String,
   description: String,
   status: String,
+  email:String,
+  name:String
 });
 
 const bookModel = mongoose.model("book", booksSchema);
 
 // http://lovalhost:port/books
-server.get("/books", getbooksHandler);
-server.post("/addBook", getAddBookHandler);
-server.delete("/deleteBook/:id", deleteBookHandler);
-server.put("/updateBook/:id", updateBookHandler);
+server.get("/books/:email", getbooksHandler);
+server.post("/addBook/:email", getAddBookHandler);
+server.delete("/deleteBook/:id/:email", deleteBookHandler);
+server.put("/updateBook/:id/:email", updateBookHandler);
 
 function getbooksHandler(req, res) {
-  bookModel.find({}, (err, result) => {
+  let email = req.params.email;
+  bookModel.find({email:email}, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -46,13 +49,16 @@ function getbooksHandler(req, res) {
 }
 
 async function getAddBookHandler(req, res) {
-  const { bookTitle, bookDescription, bookStatus } = req.body;
+  console.log(req.body)
+  const { bookTitle, bookDescription, bookStatus , email, name } = req.body;
   await bookModel.create({
     title: bookTitle,
     description: bookDescription,
     status: bookStatus,
+    email:email,
+    name:name
   });
-  bookModel.find({}, (err, result) => {
+  bookModel.find({email:email}, (err, result) => {
     if (err) {
       console.log(err);
     } else {
@@ -63,9 +69,9 @@ async function getAddBookHandler(req, res) {
 
 function deleteBookHandler(req, res) {
   const bookId = req.params.id;
-
+  let email = req.params.email;
   bookModel.deleteOne({ _id: bookId }, (err, result) => {
-    bookModel.find({}, (err, result) => {
+    bookModel.find({email:email}, (err, result) => {
       if (err) {
         console.log(err);
       } else {
@@ -77,9 +83,8 @@ function deleteBookHandler(req, res) {
 
 function updateBookHandler(req, res) {
   const id = req.params.id;
-
+  let email = req.params.email;
   const { title, description, status } = req.body; //Destructuring assignment
-  console.log(req.body);
   bookModel.findByIdAndUpdate(
     id,
     { title, description, status },
@@ -87,7 +92,7 @@ function updateBookHandler(req, res) {
       if (err) {
         console.log(err);
       } else {
-        bookModel.find({}, (err, result) => {
+        bookModel.find({email:email}, (err, result) => {
           if (err) {
             console.log(err);
           } else {
